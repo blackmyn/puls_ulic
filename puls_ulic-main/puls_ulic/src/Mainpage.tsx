@@ -10,7 +10,13 @@ import NumbersSpeak from "./components/NumbersSpeak/NumbersSpeak";
 import CallToAction from "./components/CallToAction/CallToAction";
 import ChooseTaxi from "./components/ChooseTaxi/ChooseTaxi";
 import RouteMap from "./components/RouteMap/RouteMap";
+import WarehouseManager from "./components/WarehouseManager/WarehouseManager";
 import "./App.css";
+import WarehouseWorker from "./components/WarehouseWorker/WarehouseWorker";
+import MaintenanceWorker from "./components/MaintenanceWorker/MaintenanceWorker";
+import GarageManager from "./components/GarageManager/GarageManager";
+import RepairWorker from "./components/RepairWorker/RepairWorker";
+import TaxiDriver from "./components/TaxiDriver/TaxiDriver";
 function App() {
   const numbersSpeakRef = useRef<HTMLElement>(null);
 
@@ -36,6 +42,12 @@ function App() {
       </Element>
       <AboutUs />
       <NumbersSpeak ref={numbersSpeakRef} />
+      <WarehouseManager></WarehouseManager>
+      <WarehouseWorker></WarehouseWorker>
+      <MaintenanceWorker></MaintenanceWorker>
+      <RepairWorker></RepairWorker>
+      <GarageManager></GarageManager>
+<TaxiDriver></TaxiDriver>
     </div>
   );
 }
