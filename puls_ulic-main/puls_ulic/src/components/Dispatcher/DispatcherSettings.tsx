@@ -52,7 +52,17 @@ function DispatcherSettings() {
             margin="normal"
           />
           <TextField
-            label="Пароль"
+            label="Старый пароль"
+            variant="outlined"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
+           <TextField
+            label="Новый пароль"
             variant="outlined"
             name="password"
             type="password"

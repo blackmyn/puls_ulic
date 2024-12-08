@@ -29,6 +29,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import EditIcon from "@mui/icons-material/Edit";
+import AddIcon from "@mui/icons-material/Add";  // Импортируем иконку для кнопки добавления
 import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
@@ -36,12 +37,13 @@ const drawerWidth = 240;
 interface Tariff {
   id: string;
   name: string;
-  price: number; //  Цена за километр
+  price: number; // Цена за километр
 }
 
 function TaxiDriver() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isEditingTariff, setIsEditingTariff] = useState(false);
+  const [isAddingTariff, setIsAddingTariff] = useState(false); // Состояние для диалога добавления тарифа
   const [editingTariffId, setEditingTariffId] = useState<string | null>(null);
   const [tariffs, setTariffs] = useState<Tariff[]>([
     { id: "1", name: "Эконом", price: 0.1 },
@@ -67,11 +69,24 @@ function TaxiDriver() {
     setEditingTariffId(null);
   };
 
+  const handleAddTariff = () => {
+    setIsAddingTariff(true); // Открыть диалог добавления нового тарифа
+  };
+
+  const handleCloseAddTariffDialog = () => {
+    setIsAddingTariff(false);
+  };
+
   const handleSaveTariff = (updatedTariff: Tariff) => {
     setTariffs((prevTariffs) =>
       prevTariffs.map((t) => (t.id === updatedTariff.id ? updatedTariff : t))
     );
     handleCloseEditTariffDialog();
+  };
+
+  const handleAddNewTariff = (newTariff: Tariff) => {
+    setTariffs([...tariffs, newTariff]);  // Добавляем новый тариф в список
+    handleCloseAddTariffDialog();
   };
 
   return (
@@ -119,6 +134,17 @@ function TaxiDriver() {
           Список тарифов
         </Typography>
 
+        {/* Кнопка добавления нового тарифа */}
+        <Button
+          variant="contained"
+          color="secondary"
+          startIcon={<AddIcon />}
+          onClick={handleAddTariff}
+          sx={{ marginBottom: 2 }}
+        >
+          Добавить тариф
+        </Button>
+
         {/* Таблица тарифов */}
         <TableContainer>
           <Table>
@@ -164,6 +190,14 @@ function TaxiDriver() {
               )}
           </DialogContent>
         </Dialog>
+
+        {/* Диалог добавления нового тарифа */}
+        <Dialog open={isAddingTariff} onClose={handleCloseAddTariffDialog}>
+          <DialogTitle>Добавление нового тарифа</DialogTitle>
+          <DialogContent>
+            <AddTariffForm onAdd={handleAddNewTariff} onCancel={handleCloseAddTariffDialog} />
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
@@ -194,7 +228,7 @@ function EditTariffForm({ tariff, onSave, onCancel }: EditTariffFormProps) {
         variant="outlined"
         name="name"
         value={editedTariff.name}
-        disabled //  Название тарифа не редактируется
+        disabled // Название тарифа не редактируется
         fullWidth
         margin="normal"
       />
@@ -212,6 +246,55 @@ function EditTariffForm({ tariff, onSave, onCancel }: EditTariffFormProps) {
         <Button onClick={onCancel}>Отмена</Button>
         <Button onClick={handleSave} color="primary">
           Сохранить
+        </Button>
+      </DialogActions>
+    </Box>
+  );
+}
+
+interface AddTariffFormProps {
+  onAdd: (newTariff: Tariff) => void;
+  onCancel: () => void;
+}
+
+function AddTariffForm({ onAdd, onCancel }: AddTariffFormProps) {
+  const [newTariff, setNewTariff] = useState<Tariff>({ id: "", name: "", price: 0 });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNewTariff({ ...newTariff, [name]: name === "price" ? parseFloat(value) : value });
+  };
+
+  const handleAdd = () => {
+    const newId = Math.random().toString(36).substr(2, 9); // Генерация случайного id
+    onAdd({ ...newTariff, id: newId });
+  };
+
+  return (
+    <Box component="form" noValidate autoComplete="off">
+      <TextField
+        label="Название"
+        variant="outlined"
+        name="name"
+        value={newTariff.name}
+        onChange={handleChange}
+        fullWidth
+        margin="normal"
+      />
+      <TextField
+        label="Цена за километр"
+        variant="outlined"
+        name="price"
+        type="number"
+        value={newTariff.price}
+        onChange={handleChange}
+        fullWidth
+        margin="normal"
+      />
+      <DialogActions>
+        <Button onClick={onCancel}>Отмена</Button>
+        <Button onClick={handleAdd} color="primary">
+          Добавить
         </Button>
       </DialogActions>
     </Box>

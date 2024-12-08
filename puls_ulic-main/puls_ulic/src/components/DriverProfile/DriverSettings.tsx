@@ -75,7 +75,13 @@ function DriverSettings() {
             </Select>
           </FormControl>
           <TextField
-            label="Пароль"
+            label="Старый пароль"
+            variant="outlined"
+            name="plateNumber"
+            fullWidth
+          />
+          <TextField
+            label="Новый пароль"
             variant="outlined"
             name="plateNumber"
             fullWidth

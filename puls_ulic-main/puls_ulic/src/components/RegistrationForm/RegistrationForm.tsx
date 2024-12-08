@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import "./RegistrationForm.css";
+import Header from "../HeaderSecond/HeaderSecond";
+import Navigation from "../Navigation/Navigation";
+import { Link } from "react-router-dom";
 
 function RegistrationForm() {
   const [formData, setFormData] = useState({
@@ -44,6 +47,10 @@ function RegistrationForm() {
   };
 
   return (
+    <><section>
+      <Header />
+      <Navigation></Navigation>
+    </section>
     <section className="registration-form">
       <div className="container">
         <h2>Регистрация</h2>
@@ -56,8 +63,7 @@ function RegistrationForm() {
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
-              className={errors.fullName ? "error" : ""}
-            />
+              className={errors.fullName ? "error" : ""} />
             {errors.fullName && (
               <span className="error-message">{errors.fullName}</span>
             )}
@@ -70,8 +76,7 @@ function RegistrationForm() {
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              className={errors.phone ? "error" : ""}
-            />
+              className={errors.phone ? "error" : ""} />
             {errors.phone && (
               <span className="error-message">{errors.phone}</span>
             )}
@@ -84,8 +89,7 @@ function RegistrationForm() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={errors.email ? "error" : ""}
-            />
+              className={errors.email ? "error" : ""} />
             {errors.email && (
               <span className="error-message">{errors.email}</span>
             )}
@@ -98,21 +102,18 @@ function RegistrationForm() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className={errors.password ? "error" : ""}
-            />
+              className={errors.password ? "error" : ""} />
             {errors.password && (
               <span className="error-message">{errors.password}</span>
             )}
           </div>
           <button type="submit">Зарегистрироваться</button>
           <div className="links">
-            <a href="/forgot-password">Забыли пароль?</a>
-            <span> | </span>
-            <a href="/registration">Нет аккаунта?</a>
+            <Link to="/login">Уже есть аккаунт?</Link>
           </div>
         </form>
       </div>
-    </section>
+    </section></>
   );
 }
 

@@ -1,16 +1,15 @@
-/* Эти стили практически идентичны AuthorizationForm.css, 
-   но можешь настроить их под свой дизайн */
-
    .registration-form {
-    padding: 80px 0; 
-    background-color: #f8f8f8; 
+    padding: 0px 0;
+    background-color: rgba(233, 219, 219, 0); 
     position: relative;
+    padding-bottom: 206px;
   }
   
   .registration-form .container {
     max-width: 400px; 
-    margin: 0 auto; 
+    margin: -50px auto; 
     padding: 30px;
+
     background-color: white; 
     border-radius: 10px; 
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);

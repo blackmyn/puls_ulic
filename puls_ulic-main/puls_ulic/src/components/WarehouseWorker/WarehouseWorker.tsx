@@ -1,211 +1,130 @@
 import React, { useState } from "react";
-import "./WarehouseWorker.css";
 import {
   Typography,
   AppBar,
   Toolbar,
-  IconButton,
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Divider,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
   TextField,
-  DialogActions,
+  Button,
+  MenuItem,
   Box,
   InputAdornment,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import SettingsIcon from "@mui/icons-material/Settings";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DescriptionIcon from "@mui/icons-material/Description";
-import { Link } from "react-router-dom";
-import WarehouseWorkerSettings from "./WarehouseWorkerSettings";
+import { useAuth } from "../../AuthContext"; // Подключение AuthContext
+import LogoutIcon from "@mui/icons-material/Logout";
 
-const drawerWidth = 240;
-
-interface Part {
-  id: string;
-  name: string;
-  quantity: number;
-}
+import "./WarehouseWorker.css";
 
 function WarehouseWorker() {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isRequestDialogOpen, setIsRequestDialogOpen] = useState(false);
-  const [parts, setParts] = useState<Part[]>([
-    { id: "1", name: "Тормозные колодки", quantity: 10 },
-    { id: "2", name: "Свечи зажигания", quantity: 25 },
-    { id: "3", name: "Масляный фильтр", quantity: 15 },
-  ]);
-  const [requestDetails, setRequestDetails] = useState({
-    partName: "",
-    quantity: 0,
-  });
+  const { logout } = useAuth(); // Получение функции выхода из контекста
 
-  const handleDrawerOpen = () => {
-    setIsDrawerOpen(true);
-  };
+  const [operationType, setOperationType] = useState("receive"); // Тип операции: "receive" или "issue"
+  const [partName, setPartName] = useState(""); // Название запчасти
+  const [quantity, setQuantity] = useState(0); // Количество запчастей
 
-  const handleDrawerClose = () => {
-    setIsDrawerOpen(false);
-  };
+  const handleSubmit = () => {
+    if (!partName || quantity <= 0) {
+      alert("Пожалуйста, заполните все поля корректно.");
+      return;
+    }
 
-  const handleOpenRequestDialog = () => {
-    setIsRequestDialogOpen(true);
-  };
+    if (operationType === "receive") {
+      console.log(`Получение запчастей: ${partName}, количество: ${quantity}`);
+    } else {
+      console.log(`Выдача запчастей: ${partName}, количество: ${quantity}`);
+    }
 
-  const handleCloseRequestDialog = () => {
-    setIsRequestDialogOpen(false);
-    setRequestDetails({ partName: "", quantity: 0 });
-  };
-
-  const handleRequestPart = () => {
-    // Здесь будет логика отправки запроса на сервер
-    console.log("Запрос на запчасти отправлен:", requestDetails);
-    handleCloseRequestDialog();
+    // Очистка полей после отправки
+    setPartName("");
+    setQuantity(0);
   };
 
   return (
     <div className="warehouse-worker">
       <AppBar position="static" className="app-bar">
         <Toolbar>
-          <IconButton
-            edge="start"
+          <MenuIcon sx={{ mr: 2 }} />
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            Работник склада
+          </Typography>
+          {/* Кнопка выхода */}
+          <Button
             color="inherit"
-            aria-label="menu"
-            onClick={handleDrawerOpen}
+            startIcon={<LogoutIcon />}
+            onClick={logout}
           >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6">Работник склада</Typography>
+            Выйти
+          </Button>
         </Toolbar>
       </AppBar>
-      <Drawer
-        variant="temporary"
-        anchor="left"
-        open={isDrawerOpen}
-        onClose={handleDrawerClose}
-        classes={{
-          paper: "drawer-paper",
+
+      <Box
+        sx={{
+          maxWidth: "600px",
+          margin: "40px auto",
+          padding: "20px",
+          backgroundColor: "#fff",
+          borderRadius: "8px",
+          boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
         }}
       >
-        <div className="drawer-header">
-          <IconButton onClick={handleDrawerClose}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </div>
-        <Divider />
-        <List>
-          <ListItem>
-            <ListItemIcon>
-              <SettingsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Настройки" />
-          </ListItem>
-        </List>
-      </Drawer>
-
-      <div className="container">
-        <Typography variant="h4" component="h2" gutterBottom>
-          Склад запчастей
+        <Typography variant="h5" gutterBottom>
+          Работа с запчастями
         </Typography>
+        <TextField
+          select
+          label="Тип операции"
+          value={operationType}
+          onChange={(e) => setOperationType(e.target.value)}
+          fullWidth
+          margin="normal"
+        >
+          <MenuItem value="receive">Получение</MenuItem>
+          <MenuItem value="issue">Выдача</MenuItem>
+        </TextField>
+
+        <TextField
+          label="Название запчасти"
+          value={partName}
+          onChange={(e) => setPartName(e.target.value)}
+          fullWidth
+          margin="normal"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <DescriptionIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        <TextField
+          label="Количество"
+          type="number"
+          value={quantity}
+          onChange={(e) => setQuantity(parseInt(e.target.value, 10) || 0)}
+          fullWidth
+          margin="normal"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                #
+              </InputAdornment>
+            ),
+          }}
+        />
+
         <Button
           variant="contained"
           color="primary"
-          startIcon={<DescriptionIcon />}
-          onClick={handleOpenRequestDialog}
-          sx={{ mb: 2 }}
+          fullWidth
+          sx={{ mt: 2 }}
+          onClick={handleSubmit}
         >
-          Заказать запчасти
+          Подтвердить
         </Button>
-
-        {/* Таблица запчастей */}
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Название</TableCell>
-                <TableCell>Количество</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {parts.map((part) => (
-                <TableRow key={part.id}>
-                  <TableCell>{part.name}</TableCell>
-                  <TableCell>{part.quantity}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        {/* Диалог заказа запчастей */}
-        <Dialog open={isRequestDialogOpen} onClose={handleCloseRequestDialog}>
-          <DialogTitle>Заказ запчастей</DialogTitle>
-          <DialogContent>
-            <TextField
-              label="Название запчасти"
-              value={requestDetails.partName}
-              onChange={(e) =>
-                setRequestDetails({
-                  ...requestDetails,
-                  partName: e.target.value,
-                })
-              }
-              fullWidth
-              margin="normal"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <DescriptionIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              label="Количество"
-              type="number"
-              value={requestDetails.quantity}
-              onChange={(e) =>
-                setRequestDetails({
-                  ...requestDetails,
-                  quantity: parseInt(e.target.value, 10) || 0,
-                })
-              }
-              fullWidth
-              margin="normal"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    {/* You can use a different icon for quantity if you like */}
-                    <DescriptionIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseRequestDialog}>Отмена</Button>
-            <Button onClick={handleRequestPart} color="primary">
-              Отправить запрос
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <WarehouseWorkerSettings></WarehouseWorkerSettings>
-      </div>
+      </Box>
     </div>
   );
 }

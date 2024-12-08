@@ -46,14 +46,6 @@ function CarDetails({ carId }: CarDetailsProps) {
       </Typography>
       {/*  Добавьте другие поля с информацией */}
       <Divider sx={{ my: 2 }} />
-      <TextField
-        label="Комментарий"
-        multiline
-        rows={4}
-        fullWidth
-        margin="normal"
-        //  Значение по умолчанию или из состояния
-      />
       <Button
         variant="contained"
         color="primary"

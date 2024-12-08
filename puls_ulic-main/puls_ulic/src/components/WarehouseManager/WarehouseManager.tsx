@@ -238,6 +238,7 @@ function WarehouseManager() {
     <div className="warehouse-manager">
       <AppBar position="static" className="app-bar">
         <Toolbar>
+          
           <IconButton
             edge="start"
             color="inherit"
@@ -245,10 +246,14 @@ function WarehouseManager() {
             onClick={handleDrawerOpen}
           >
             <MenuIcon />
+            
           </IconButton>
           <Typography variant="h6">Начальник склада</Typography>
+          
         </Toolbar>
+
       </AppBar>
+      
       <Drawer
         variant="temporary"
         anchor="left"

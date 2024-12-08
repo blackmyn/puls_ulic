@@ -1,5 +1,6 @@
 import React from 'react';
 import './Navigation.css';
+import { Link } from 'react-scroll';
 
 function Navigation() {
   return (
@@ -7,7 +8,7 @@ function Navigation() {
       <div className="container">
         <ul>
           <li>
-            <a href="#" className="active">ДОМОЙ</a>
+            <Link to="/"> <a href ="/" className="active">ДОМОЙ</a></Link>
           </li>
           <li>
             <a href="#">О НАС</a>

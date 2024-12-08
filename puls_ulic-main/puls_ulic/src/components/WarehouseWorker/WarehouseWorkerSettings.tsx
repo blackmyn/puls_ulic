@@ -41,9 +41,19 @@ function WarehouseWorkerSettings() {
             margin="normal"
           />
           <TextField
-            label="Пароль"
+            label="Старый Пароль"
             variant="outlined"
-            name="password"
+            name="oldpassword"
+            type="password" // Тип поля - пароль
+            value={formData.password}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Новый Пароль"
+            variant="outlined"
+            name="newpassword"
             type="password" // Тип поля - пароль
             value={formData.password}
             onChange={handleChange}
