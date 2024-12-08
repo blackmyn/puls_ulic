@@ -24,7 +24,24 @@
     display: flex;
     align-items: center; 
   }
-  
+  .sign-out {
+    background-color: #ffc000; /* Желтый цвет, соответствующий остальной палитре */
+    color: #000; /* Черный текст */
+    border: none;
+    border-radius: 5px; /* Скругленные углы */
+    padding: 10px 20px; /* Внутренние отступы для увеличения кликабельности */
+    font-size: 14px; /* Размер шрифта */
+    font-weight: bold; /* Жирный текст */
+    cursor: pointer; /* Указатель для интерактивности */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Плавная анимация */
+    margin-left: 10px; /* Расстояние от других элементов */
+}
+
+.sign-out:hover {
+    background-color: #000; /* Цвет фона при наведении */
+    color: #ffee00; /* Цвет текста при наведении */
+}
+
   .sign-in,
   .email,
   .phone {

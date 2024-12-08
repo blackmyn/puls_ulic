@@ -22,7 +22,7 @@ function Header() {
                 <FontAwesomeIcon icon={faUser} className="icon" />
                 <span>Мой аккаунт</span>
               </Link>
-                <button onClick={logout} className="sign">
+                <button onClick={logout} className="sign-out">
                   Выйти
                 </button>
               </>
