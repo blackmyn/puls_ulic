@@ -19,6 +19,7 @@ class Server {
   initializeRoutes() {
     this.app.get('/api/cities', cityController.getCities); 
     this.app.post('/api/login', userController.getUsers); 
+    this.app.post('/api/reg', userController.registerUserControll); 
   }
 
   start() {

@@ -1,26 +1,45 @@
 import React, { useState } from "react";
 import "./RegistrationForm.css";
 import Header from "../HeaderSecond/HeaderSecond";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from "../../AuthContext";
 import Navigation from "../Navigation/Navigation";
-import { Link } from "react-router-dom";
+
+interface FormData {
+  fullName: string;
+  phone: string;
+  email: string;
+  password: string;
+}
+
+interface FormErrors {
+  fullName?: string;
+  phone?: string;
+  email?: string;
+  password?: string;
+  general?: string;
+}
 
 function RegistrationForm() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     fullName: "",
     phone: "",
     email: "",
     password: "",
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<FormErrors>({});
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors = {};
+    const newErrors: FormErrors = {};
 
     if (formData.fullName.trim() === "") {
       newErrors.fullName = "ФИО обязательно для заполнения";
@@ -40,9 +59,22 @@ function RegistrationForm() {
 
     setErrors(newErrors);
 
-    if (Object.keys(newErrors).length === 0) {
-      // Здесь можно добавить логику отправки данных на сервер
-      console.log("Форма отправлена:", formData);
+    try {
+      const response = await axios.post("http://localhost:5000/api/reg", formData);
+      
+      const { role } = response.data;
+  
+      login(role);
+  
+      navigate('/');
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        console.error("Ошибка авторизации:", err.response?.data?.message || "Неизвестная ошибка");
+        setErrors({ general: err.response?.data?.message || "Не удалось войти" });
+      } else {
+        console.error("Неизвестная ошибка авторизации:", err);
+        setErrors({ general: "Произошла неизвестная ошибка" });
+      }
     }
   };
 

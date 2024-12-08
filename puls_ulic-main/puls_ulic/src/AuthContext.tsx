@@ -2,26 +2,35 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  login: () => void;
+  role: string | null; 
+  login: (role: string) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem("role")
+  );
+  const [role, setRole] = useState<string | null>(
+    localStorage.getItem("role")
+  );
 
-  const login = () => {
+  const login = (userRole: string) => {
     setIsAuthenticated(true);
+    setRole(userRole); 
+    localStorage.setItem("role", userRole); 
   };
 
   const logout = () => {
     setIsAuthenticated(false);
-    localStorage.removeItem('user'); // Clear local storage on logout
+    setRole(null);
+    localStorage.removeItem("role");
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, role, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

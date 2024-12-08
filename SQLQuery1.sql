@@ -77,7 +77,6 @@ CREATE TABLE Users (
     full_name VARCHAR(255) NOT NULL,
     phone_number VARCHAR(15) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    login VARCHAR(50) NULL,
     password VARCHAR(255) NULL,
     role_id INT NOT NULL REFERENCES Roles(id)
 );

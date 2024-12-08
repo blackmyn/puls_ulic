@@ -4,13 +4,12 @@ INSERT INTO Cities (name) VALUES
 ('Новосибирск');
 
 INSERT INTO ROLES(role_name) VALUES
-('Администратор'),
-('Модератор'),
+('Клиент'),
 ('Водитель'),
-('Клиент');
+('Диспетчер');
 
 INSERT INTO Users (full_name, phone_number, email, login, password, role_id) VALUES
-('Алексей Петров', '+79361234567', 'sashadd.tit@mail.com', 'alexey_petrov', 'password123', 4), 
+('Алексей Петров', '+79361234567', 'sashadd.tit@mail.com', 'alexey_petrov', 'password123', 1), 
 ('Иван Иванов', '+79161234567', 'ivanov@example.com', 'ivan_ivanov', '1234', 1),
 ('Мария Смирнова', '+79261234567', 'smirnova@example.com', 'maria_smirnova', '12345', 2),
 ('Алексей Петров', '+79361234567', 'petrov@example.com', 'alexey_petrov', '123456', 1),

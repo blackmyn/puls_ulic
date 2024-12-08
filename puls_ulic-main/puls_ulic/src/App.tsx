@@ -2,9 +2,12 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import "./App.css";
 import Mainpage from "../src/Mainpage";
 import AuthorizationForm from "./components/AuthorizationForm/AuthorizationForm";
-import Header from './components/Header/Header';
 import RegistrationForm from './components/RegistrationForm/RegistrationForm';
 import { AuthProvider } from './AuthContext';
+import CustomerProfile from './components/CustomerProfile/CustomerProfile';
+import ProtectedRoute from './ProtectedRoute';
+import Dispatcher from './components/Dispatcher/Dispatcher';
+import DriverProfile from './components/DriverProfile/DriverProfile';
 function App() {
   return (
     <AuthProvider>
@@ -14,6 +17,15 @@ function App() {
             <Route path="/" element={<Mainpage />} />
             <Route path="/login" element={<AuthorizationForm />} />
             <Route path="/registration" element={<RegistrationForm />} />
+            <Route path="/profileuser" element={<ProtectedRoute allowedRoles={['Клиент']} />}>
+              <Route path="" element={<CustomerProfile />} />
+            </Route>
+            <Route path="/profiledriver" element={<ProtectedRoute allowedRoles={['Водитель']} />}>
+              <Route path="" element={<DriverProfile />} />
+            </Route>
+            <Route path="/profiledispatcher" element={<ProtectedRoute allowedRoles={['Диспетчер']} />}>
+              <Route path="" element={<Dispatcher />} />
+            </Route>
           </Routes>
         </BrowserRouter>
       </div>

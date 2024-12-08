@@ -9,7 +9,8 @@ import { Link } from "react-router-dom";
 import { useAuth } from '../../AuthContext';
 
 function Header() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, role } = useAuth();
+  console.log("Текущая роль пользователя:", role);
 
   return (
     <header className="header">
@@ -18,10 +19,24 @@ function Header() {
           <div className="left-side">
             {isAuthenticated ? (
               <>
-                <Link to="/profile" className="sign-in">
-                <FontAwesomeIcon icon={faUser} className="icon" />
-                <span>Мой аккаунт</span>
-              </Link>
+                {role === "Клиент" && (
+                  <Link to="/profileuser" className="sign-in">
+                    <FontAwesomeIcon icon={faUser} className="icon" />
+                    <span>Мой аккаунт</span>
+                  </Link>
+                )}
+                {role === "Водитель" && (
+                  <Link to="/profiledriver" className="sign-in">
+                    <FontAwesomeIcon icon={faUser} className="icon" />
+                    <span>Мой аккаунт</span>
+                  </Link>
+                )}
+                {role === "Диспетчер" && (
+                  <Link to="/profiledispatcher" className="sign-in">
+                    <FontAwesomeIcon icon={faUser} className="icon" />
+                    <span>Мой аккаунт</span>
+                  </Link>
+                )}
                 <button onClick={logout} className="sign-out">
                   Выйти
                 </button>
@@ -73,6 +88,7 @@ function Header() {
     </header>
   );
 }
+
 
 
 export default Header;

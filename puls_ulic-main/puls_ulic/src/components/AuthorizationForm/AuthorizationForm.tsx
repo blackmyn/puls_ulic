@@ -34,12 +34,34 @@ function AuthorizationForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
-      const response = await axios.post("http://localhost:5000/api/login", formData)
-      .then(res => {
-        login();
+      const newErrors: FormErrors = {};
+
+      if (formData.email.trim() === "") {
+        newErrors.email = "Email обязателен для заполнения";
+      }
+  
+      if (formData.password.trim() === "") {
+        newErrors.password = "Пароль обязателен для заполнения";
+      }
+
+      setErrors(newErrors);
+      try {
+        const response = await axios.post("http://localhost:5000/api/login", formData);
+        
+        const { role } = response.data;
+    
+        login(role);
+    
         navigate('/');
-      })
-      .catch(err => console.error("Ошибка авторизации:", err.response.data.message));
+      } catch (err) {
+        if (axios.isAxiosError(err)) {
+          console.error("Ошибка авторизации:", err.response?.data?.message || "Неизвестная ошибка");
+          setErrors({ general: err.response?.data?.message || "Не удалось войти" });
+        } else {
+          console.error("Неизвестная ошибка авторизации:", err);
+          setErrors({ general: "Произошла неизвестная ошибка" });
+        }
+      }
 };
 
 
