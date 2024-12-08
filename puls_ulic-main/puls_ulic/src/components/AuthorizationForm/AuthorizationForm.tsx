@@ -48,9 +48,9 @@ function AuthorizationForm() {
       try {
         const response = await axios.post("http://localhost:5000/api/login", formData);
         
-        const { role } = response.data;
+        const { role, userId } = response.data;
     
-        login(role);
+        login(role, userId);
     
         navigate('/');
       } catch (err) {

@@ -1,6 +1,6 @@
 import React from 'react';
 import './Navigation.css';
-import { Link } from 'react-scroll';
+import { Link } from 'react-router-dom';
 
 function Navigation() {
   return (
@@ -8,23 +8,23 @@ function Navigation() {
       <div className="container">
         <ul>
           <li>
-            <Link to="/"> <a href ="/" className="active">ДОМОЙ</a></Link>
+            <Link to="/" className="active">ДОМОЙ</Link>
           </li>
           <li>
-            <a href="#">О НАС</a>
+            <Link to="/about">О НАС</Link>
           </li>
           <li>
-            <a href="#">ЗАКАЗАТЬ ТАКСИ</a>
+            <Link to="/neworderclient">ЗАКАЗАТЬ ТАКСИ</Link>
           </li>
           <li>
-            <a href="#">НОВОСТИ</a>
+            <Link to="/news">НОВОСТИ</Link>
           </li>
           <li>
-            <a href="#">КОНТАКТЫ</a>
+            <Link to="/contacts">КОНТАКТЫ</Link>
           </li>
         </ul>
       </div>
-    </nav> 
+    </nav>
   );
 }
 

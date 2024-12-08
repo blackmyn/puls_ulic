@@ -118,6 +118,7 @@ CREATE TABLE CompletedOrders (
     driver_id INT NOT NULL REFERENCES Drivers(id),
     client_id INT NOT NULL REFERENCES Clients(id),
     dispatcher_id INT NULL REFERENCES Dispatchers(id),
+	tariffs_id INT NULL REFERENCES Tatiffs(id),
     cost DECIMAL(10, 2) NOT NULL,
     mileage DECIMAL(10, 2) NOT NULL,
     pickup_location VARCHAR(255) NOT NULL,
@@ -134,7 +135,10 @@ CREATE TABLE UncompletedOrders (
     driver_id INT NOT NULL REFERENCES Drivers(id),
     client_id INT NOT NULL REFERENCES Clients(id),
     dispatcher_id INT NULL REFERENCES Dispatchers(id),
+	tariffs_id INT NULL REFERENCES Tatiffs(id),
     pickup_location VARCHAR(255) NOT NULL,
     dropoff_location VARCHAR(255) NOT NULL,
-    cost DECIMAL(10, 2) NOT NULL
+    cost DECIMAL(10, 2) NOT NULL,
+	mileage DECIMAL(10, 2) NOT NULL,
+	payment_method VARCHAR(50) NOT NULL
 );

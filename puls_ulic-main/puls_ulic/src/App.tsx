@@ -8,6 +8,7 @@ import CustomerProfile from './components/CustomerProfile/CustomerProfile';
 import ProtectedRoute from './ProtectedRoute';
 import Dispatcher from './components/Dispatcher/Dispatcher';
 import DriverProfile from './components/DriverProfile/DriverProfile';
+import NewOrder from './components/CustomerProfile/NewOrder';
 function App() {
   return (
     <AuthProvider>
@@ -26,6 +27,7 @@ function App() {
             <Route path="/profiledispatcher" element={<ProtectedRoute allowedRoles={['Диспетчер']} />}>
               <Route path="" element={<Dispatcher />} />
             </Route>
+            <Route path="/neworderclient" element={<NewOrder />} />
           </Routes>
         </BrowserRouter>
       </div>

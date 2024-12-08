@@ -4,7 +4,7 @@ const db = require('../dbconnector/dbconnector');
 
 const getAuthUser = async ({ email, password }) => {
   const sql = `
-    SELECT r.role_name
+    SELECT u.id, r.role_name
     FROM users u
     JOIN roles r ON u.role_id = r.id
     WHERE u.email = $1 AND u.password = $2
@@ -19,8 +19,8 @@ const getAuthUser = async ({ email, password }) => {
       if (data.rowCount === 0) {
         return reject(new Error("Неправильный логин или пароль"));
       }
-
-      resolve({ role: data.rows[0].role_name }); 
+      
+      resolve({ userId: data.rows[0].id, role: data.rows[0].role_name }); 
     });
   });
 };
@@ -67,7 +67,7 @@ const registerUser = async ({ fullName, phone, email, password }) => {
               console.error('Ошибка SQL (добавление клиента):', err.message);
               return reject(new Error("Ошибка при добавлении клиента"));
             }
-            resolve({ role: "Клиент" });
+            resolve({ role: "Клиент", user: userId });
           });
         }
       );
