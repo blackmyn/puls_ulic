@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./AuthorizationForm.css";
 import { useAuth } from "../../AuthContext";
 import HeaderSecond from "../HeaderSecond/HeaderSecond";
@@ -33,47 +34,13 @@ function AuthorizationForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
-    const newErrors: FormErrors = {};
-
-    if (formData.email.trim() === "") {
-      newErrors.email = "Email is required";
-    }
-
-    if (formData.password.trim() === "") {
-      newErrors.password = "Password is required";
-    }
-
-    setErrors(newErrors);
-
-    if (Object.keys(newErrors).length === 0) {
-      try {
-        const response = await fetch("http://localhost:5000/api/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
-
-        if (response.ok) {
-          const userData = await response.json();
-           login();
-          localStorage.setItem("user", JSON.stringify(userData));
-          navigate("/");
-        } else {
-            const errorData = await response.json();
-          console.error("Ошибка авторизации:", errorData.message);
-          setErrors({ general: errorData.message });
-
-
-        }
-      } catch (error) {
-         console.error("Ошибка соединения с сервером:", error);
-        setErrors({ general: "Не удалось соединиться с сервером" });
-      }
-    }
-
-  };
+      const response = await axios.post("http://localhost:5000/api/login", formData)
+      .then(res => {
+        login();
+        navigate('/');
+      })
+      .catch(err => console.error("Ошибка авторизации:", err.response.data.message));
+};
 
 
   return (

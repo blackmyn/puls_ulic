@@ -14,7 +14,8 @@ const getAuthUser = async ({ email, password }) => {
       if (data.rowCount === 0) {
         return reject(new Error("Неправильный логин или пароль"));
       }
-      
+      const user = data.rows[0];
+      resolve(user);
     });
   });
 };

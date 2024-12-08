@@ -18,9 +18,11 @@ function Header() {
           <div className="left-side">
             {isAuthenticated ? (
               <>
+                <Link to="/profile" className="sign-in">
                 <FontAwesomeIcon icon={faUser} className="icon" />
-                <span>мой аккаунт</span>
-                <button onClick={logout} className="logout-button">
+                <span>Мой аккаунт</span>
+              </Link>
+                <button onClick={logout} className="sign">
                   Выйти
                 </button>
               </>
