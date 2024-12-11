@@ -4,6 +4,7 @@ import "./DriverProfile.css";
 import { Link } from "react-router-dom";
 import { Avatar, Typography, Switch, FormControlLabel } from "@mui/material";
 import DriverSettings from "./DriverSettings";
+import { useAuth } from "../../AuthContext";
 
 interface DriverData {
   name: string;
@@ -17,7 +18,9 @@ interface DriverData {
 }
 
 function DriverProfile() {
+  const { isAuthenticated, logout, role } = useAuth();
   const [driverData, setDriverData] = useState<DriverData>({
+    
     name: "Иван Иванов",
     phone: "+7 (999) 123-45-67",
     email: "ivan.ivanov@example.com",
@@ -59,6 +62,7 @@ function DriverProfile() {
         </div>
         <div className="profile-actions">
           <a className="settings-link">Настройки</a>
+          <button  onClick={logout} className="settings-link">Выйти</button>
           <FormControlLabel
             control={
               <Switch

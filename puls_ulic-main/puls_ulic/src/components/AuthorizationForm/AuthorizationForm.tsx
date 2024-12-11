@@ -51,8 +51,16 @@ function AuthorizationForm() {
         const { role, userId } = response.data;
     
         login(role, userId);
-    
-        navigate('/');
+        if (role === "Водитель") {
+          navigate('/profiledriver');
+        }
+        else if (role === "Диспетчер"){
+          navigate('/profiledispatcher')
+        }
+        else {
+          navigate('/');
+        }
+
       } catch (err) {
         if (axios.isAxiosError(err)) {
           console.error("Ошибка авторизации:", err.response?.data?.message || "Неизвестная ошибка");

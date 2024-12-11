@@ -26,6 +26,8 @@ import ChildCareIcon from "@mui/icons-material/ChildCare";
 import PetsIcon from "@mui/icons-material/Pets";
 import "./NewOrder.css";
 import { getDistance } from "geolib";
+import OrderStatus from "../OrderStatus/OrderStatus";
+import { Link } from "react-router-dom";
 
 interface Location {
   lat: number;
@@ -148,14 +150,15 @@ function NewOrder() {
   return (
     <div className="new-order-page">
       <div className="container">
-        <div className="company-info">
+        <Link to="/"> <div className="company-info">
           <img
             src="https://i.ibb.co/6J4cQ2H/logo.png"
             alt="Логотип компании"
             className="company-logo"
           />
         </div>
-
+</Link>
+        
         <h2>Новый заказ</h2>
 
         <div className="map-container">
@@ -306,7 +309,7 @@ function NewOrder() {
             className="payment-button"
             onClick={handlePayment}
           >
-            Оплатить заказ
+            Заказать такси
           </Button>
 
           {paymentStatus && (

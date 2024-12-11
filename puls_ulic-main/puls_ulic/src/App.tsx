@@ -27,7 +27,9 @@ function App() {
             <Route path="/profiledispatcher" element={<ProtectedRoute allowedRoles={['Диспетчер']} />}>
               <Route path="" element={<Dispatcher />} />
             </Route>
-            <Route path="/neworderclient" element={<NewOrder />} />
+            <Route path="/neworderclient" element={<ProtectedRoute allowedRoles={['Клиент']} />}>
+              <Route path="" element={<NewOrder />} />
+            </Route>
           </Routes>
         </BrowserRouter>
       </div>
