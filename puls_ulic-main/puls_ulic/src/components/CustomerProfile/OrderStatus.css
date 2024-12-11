@@ -1,0 +1,164 @@
+
+
+.order-status {
+    text-align: center;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    margin-bottom: 20px;
+    position: relative;
+
+  }
+
+  .order-status h3 {
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .waiting-for-driver {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  
+  .waiting-for-driver .progress-container {
+    margin-bottom: 10px;
+    margin-bottom: 615px;
+    position: relative;
+  }
+  
+  .waiting-for-driver .MuiCircularProgress-root {
+    margin: 10px 0;
+    color: #007bff; /* Синий цвет прогресс-бара */
+  }
+  
+  .waiting-for-driver p {
+      color: #555;
+  }
+  
+  .driver-found {
+    display: flex;
+    margin-top: 290px;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 322px;
+  }
+  
+  .driver-found img.driver-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .driver-found .driver-details {
+    flex-grow: 1;
+  }
+  
+  .driver-details p {
+    margin: 5px 0;
+  }
+  
+  .star-icon {
+    font-size: 1.2em;
+    color: gold;
+    vertical-align: middle;
+  }
+  
+  .phone-link {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .phone-link:hover {
+    text-decoration: underline;
+  }
+  
+  .driver-arrived {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .driver-arrived .arrival-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    margin-bottom: 683px;
+  }
+  
+  .check-icon {
+    color: #4CAF50;
+  }
+  
+  .driver-arrived p {
+    color: #333;
+    font-size: 1.1em;
+  }
+  
+  .order-completed {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 130px;
+    margin-bottom: 230px;
+  }
+  
+  .order-completed .completed-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .order-completed .check-icon {
+    color: #4CAF50;
+  }
+  
+  .order-completed .order-stats {
+    margin-top: 20px;
+  }
+  
+  .order-completed .order-stats p {
+    margin: 5px 0;
+  }
+  
+  .order-completed .feedback-form {
+    margin-top: 20px;
+    width: 100%;
+  }
+  
+  .order-completed textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: vertical;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+  }
+  
+  .order-completed .submit-feedback-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .order-status-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    padding-top: 22px;
+    position: relative;
+  }

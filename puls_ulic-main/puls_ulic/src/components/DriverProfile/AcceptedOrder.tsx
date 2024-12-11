@@ -8,9 +8,16 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { useNavigate } from "react-router-dom";
 
 function AcceptedOrder() {
+  const navigate = useNavigate(); // Создаем useNavigate hook
+
+  const handleCancelOrder = () => {
+    navigate("/profiledriver"); // Перенаправляем на страницу профиля водителя
+  };
   return (
+    
     <div className="accepted-order-page">
       <div className="container">
         <h2>Заказ принят</h2>
@@ -90,13 +97,16 @@ function AcceptedOrder() {
           </MapContainer>
         </div>
 
-        <div className="cancel-button-container">
-          {" "}
-          {/*  Добавляем контейнер для кнопки */}
-          <button className="cancel-button">Отменить заказ</button>
+        <div className="buttons-container"> {/* Создаем контейнер для кнопок */}
+          <button className="cancel-button" onClick={handleCancelOrder}>
+            Отменить заказ
+          </button>
+          <button className="back-button" onClick={handleCancelOrder}>
+            Вернуться в профиль
+          </button>
         </div>
       </div>
-    </div>
+      </div>
   );
 }
 

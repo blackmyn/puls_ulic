@@ -17,6 +17,7 @@ import MaintenanceWorker from "./components/MaintenanceWorker/MaintenanceWorker"
 import GarageManager from "./components/GarageManager/GarageManager";
 import RepairWorker from "./components/RepairWorker/RepairWorker";
 import TaxiDriver from "./components/TaxiDriver/TaxiDriver";
+import Dispatcher from "./components/Dispatcher/Dispatcher";
 function App() {
   const numbersSpeakRef = useRef<HTMLElement>(null);
 
@@ -42,12 +43,13 @@ function App() {
       </Element>
       <AboutUs />
       <NumbersSpeak ref={numbersSpeakRef} />
-      <WarehouseManager></WarehouseManager>
+      <Dispatcher></Dispatcher>
+      {/* <WarehouseManager></WarehouseManager>
       <WarehouseWorker></WarehouseWorker>
       <MaintenanceWorker></MaintenanceWorker>
       <RepairWorker></RepairWorker>
-      <GarageManager></GarageManager>
-<TaxiDriver></TaxiDriver>
+      <GarageManager></GarageManager> */}
+      {/* <TaxiDriver></TaxiDriver> */}
     </div>
   );
 }

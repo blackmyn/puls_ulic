@@ -31,7 +31,9 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../AuthContext";
+import DriverSettings from "./DispatcherSettings"; // Импорт компонента настроек
 
 const drawerWidth = 240;
 
@@ -78,6 +80,8 @@ function Dispatcher() {
 
   //  Состояние для редактируемого заказа
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
+    // Состояние для выбранного пункта меню
+  const [selectedMenuItem, setSelectedMenuItem] = useState<string | null>(null);
 
   //  Обработчики событий для открытия/закрытия диалоговых окон
   const handleDrawerOpen = () => {
@@ -144,6 +148,18 @@ function Dispatcher() {
     }
   };
 
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
+  const handleMenuItemClick = (menuItem: string) => {
+    setSelectedMenuItem(menuItem);
+  };
+
   return (
     <div className="dispatcher">
       <AppBar position="static" className="app-bar">
@@ -156,7 +172,12 @@ function Dispatcher() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6">Диспетчер</Typography>
+          <Typography variant="h6" flexGrow={1}>
+            Диспетчер
+          </Typography>
+          <Button onClick={handleLogout} color="inherit">
+            Выйти
+          </Button>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -175,12 +196,18 @@ function Dispatcher() {
         </div>
         <Divider />
         <List>
-          <ListItem>
+          <ListItem
+            button
+            key="settings"
+            onClick={() => handleMenuItemClick("settings")}
+            selected={selectedMenuItem === "settings"}
+          >
             <ListItemIcon>
               <SettingsIcon />
             </ListItemIcon>
             <ListItemText primary="Настройки" />
           </ListItem>
+          {/* Добавьте другие пункты меню здесь */}
         </List>
       </Drawer>
 
@@ -365,6 +392,7 @@ function Dispatcher() {
             </Button>
           </DialogActions>
         </Dialog>
+        {selectedMenuItem === "settings" && <DriverSettings />}
       </div>
     </div>
   );

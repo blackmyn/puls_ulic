@@ -18,16 +18,15 @@ import {
   Checkbox,
   FormGroup,
   InputAdornment,
-  Button,  
+  Button,
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import LocalTaxiIcon from "@mui/icons-material/LocalTaxi";
 import ChildCareIcon from "@mui/icons-material/ChildCare";
 import PetsIcon from "@mui/icons-material/Pets";
 import "./NewOrder.css";
 import { getDistance } from "geolib";
-import OrderStatus from "../OrderStatus/OrderStatus";
-import { Link } from "react-router-dom";
+import OrderStatusContainer from "./OrderStatusContainer";
+import { Link, useNavigate } from "react-router-dom";
 
 interface Location {
   lat: number;
@@ -46,24 +45,25 @@ function calculateDistance(
   return getDistance(point1, point2);
 }
 
+const reverseGeocode = async (lat: number, lng: number) => {
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`
+    );
+    const data = await response.json();
+    return data.display_name || "Адрес не найден";
+  } catch (error) {
+    console.error("Ошибка геокодирования:", error);
+    return "Ошибка получения адреса";
+  }
+};
+
+
 function LocationMarker({
   onAddressChange,
   onMarkersChange,
 }: LocationMarkerProps) {
   const [markers, setMarkers] = useState<Location[]>([]);
-
-  const reverseGeocode = async (lat: number, lng: number) => {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`
-      );
-      const data = await response.json();
-      return data.display_name || "Адрес не найден";
-    } catch (error) {
-      console.error("Ошибка геокодирования:", error);
-      return "Ошибка получения адреса";
-    }
-  };
 
   useMapEvents({
     async click(e) {
@@ -97,6 +97,7 @@ function LocationMarker({
   ));
 }
 
+
 function NewOrder() {
   const [selectedTariff, setSelectedTariff] = useState<string | null>(null);
   const [addresses, setAddresses] = useState<string[]>(["", ""]);
@@ -104,6 +105,8 @@ function NewOrder() {
   const [distance, setDistance] = useState<number | null>(null);
   const [price, setPrice] = useState<number | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null);  
+  const [showOrderStatus, setShowOrderStatus] = useState(false); 
+  const navigate = useNavigate();
 
   const handleTariffSelect = (tariff: string) => {
     setSelectedTariff(tariff);
@@ -126,30 +129,42 @@ function NewOrder() {
   };
 
   const handleMarkerUpdate = (newMarkers: Location[]) => {
+
     setMarkers(newMarkers);
     if (newMarkers.length === 2) {
-      const calculatedDistance = calculateDistance(
-        { latitude: newMarkers[0].lat, longitude: newMarkers[0].lng },
-        { latitude: newMarkers[1].lat, longitude: newMarkers[1].lng }
-      );
-      setDistance(calculatedDistance);
-      if (selectedTariff) {
-        handleTariffSelect(selectedTariff); 
-      }
+        const calculatedDistance = calculateDistance(
+            { latitude: newMarkers[0].lat, longitude: newMarkers[0].lng },
+            { latitude: newMarkers[1].lat, longitude: newMarkers[1].lng }
+        );
+        setDistance(calculatedDistance);
+        if (selectedTariff) {
+            handleTariffSelect(selectedTariff);
+        }
+
+        Promise.all(newMarkers.map(marker => reverseGeocode(marker.lat, marker.lng)))
+            .then(newAddresses => setAddresses(newAddresses))
+            .catch(error => console.error("Ошибка получения адресов:", error));
+
     }
-  };
+};
 
   const handlePayment = () => {
     if (price !== null) {
       setPaymentStatus(`Оплата успешно проведена. Сумма: ${price} руб.`);
+      navigate("/orderstatus");
     } else {
       setPaymentStatus("Ошибка: не удалось вычислить стоимость.");
     }
   };
 
+  const handleCancelOrder = () => {
+    setShowOrderStatus(false); 
+    navigate("/"); 
+  };
+
   return (
     <div className="new-order-page">
-      <div className="container">
+      <div className={`container ${showOrderStatus ? "hidden" : ""}`}> 
         <Link to="/"> <div className="company-info">
           <img
             src="https://i.ibb.co/6J4cQ2H/logo.png"
@@ -158,7 +173,6 @@ function NewOrder() {
           />
         </div>
 </Link>
-        
         <h2>Новый заказ</h2>
 
         <div className="map-container">
@@ -302,7 +316,6 @@ function NewOrder() {
             </FormGroup>
           </div>
 
-          {/* Кнопка оплаты */}
           <Button
             variant="contained"
             color="primary"
@@ -316,6 +329,14 @@ function NewOrder() {
             <p className="payment-status">{paymentStatus}</p>
           )}
         </div>
+        {showOrderStatus && (
+          <div className="">
+            <OrderStatusContainer />
+            <Button variant="outlined" color="error" onClick={handleCancelOrder}>
+              Отменить заказ
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

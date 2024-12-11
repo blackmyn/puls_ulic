@@ -10,6 +10,7 @@ import {
   Divider,
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { useNavigate } from "react-router-dom";
 
 interface OrderItem {
   id: string;
@@ -19,6 +20,7 @@ interface OrderItem {
 }
 
 function OrderList() {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState<OrderItem[]>([
     {
       id: "1",
@@ -48,12 +50,8 @@ function OrderList() {
     );
   };
 
-  const handleCompleteOrder = (orderId: string) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === orderId ? { ...order, status: "Выполнен" } : order
-      )
-    );
+  const handleCompleteOrder = () => {
+    navigate("/acceptedorder"); 
   };
 
   return (
@@ -97,7 +95,7 @@ function OrderList() {
                 <Button
                   variant="contained"
                   color="info"
-                  onClick={() => handleCompleteOrder(order.id)}
+                  onClick={handleCompleteOrder}
                 >
                   Выполнить
                 </Button>

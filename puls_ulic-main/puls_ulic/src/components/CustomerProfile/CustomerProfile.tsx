@@ -1,9 +1,21 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./CustomerProfile.css";
 import OrderHistory from "./OrderHistory";
 import Settings from "./Settings";
+import Header from "../HeaderSecond/HeaderSecond";
+import Navigation from "../Navigation/Navigation";
+import { useAuth } from "../../AuthContext"; // Import useAuth
+
 function CustomerProfile() {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/"); // Redirect to the main page after logout
+  };
+
   return (
     <section className="customer-profile">
       <div className="container">
@@ -29,8 +41,13 @@ function CustomerProfile() {
             </div>
           </div>
           <div className="profile-links">
-            <a className="settings-link">Настройки профиля</a>
+            <a className="settings-link">Настройки профиля</a> {/* Added a div for buttons */}
+            <Link to="/" className="settings-link">На главную</Link>
+            <button className="settings-link" onClick={handleLogout}>
+              Выйти из аккаунта
+            </button>
           </div>
+
           <div className="user-stats">
             <h3>Статистика поездок</h3>
             <div className="stat-item">
@@ -52,12 +69,13 @@ function CustomerProfile() {
           </div>
           <div className="user-stats">
             <h3>История заказов</h3>
-            <OrderHistory></OrderHistory>
+            <OrderHistory />
           </div>
           <div className="user-stats">
             <h3>Настройки профиля</h3>
-            <Settings></Settings>
+            <Settings />
           </div>
+          
         </div>
       </div>
     </section>
