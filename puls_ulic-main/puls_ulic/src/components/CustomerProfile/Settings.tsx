@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import "./Settings.css";
+import axios from "axios";
 
 interface FormData {
   fullName: string;
   phone: string;
   email: string;
+  password: string;
 }
 
 function Settings() {
   const [formData, setFormData] = useState<FormData>({
-    fullName: "Иван Иванов", //  Изначальные значения
-    phone: "+7 (999) 123-45-67",
-    email: "ivan.ivanov@example.com",
+    fullName: "Имя Фамилия",
+    phone: "1234567890",
+    email: "example@mail.com",
+    password: "пароль123",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,11 +22,27 @@ function Settings() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    //  Здесь будет логика отправки данных формы на сервер
-    console.log("Данные формы:", formData);
+    try {
+      const userId = localStorage.getItem("userId");
+      if (!userId) {
+        alert("Ошибка: userId не найден в localStorage");
+        return;
+      }
+
+      await axios.put(
+        `http://localhost:5000/api/customer/editprofile?userId=${userId}`,
+        formData
+      );
+  
+      window.location.reload();
+    } catch (err) {
+      console.error("Ошибка при сохранении данных:", err);
+      alert("Не удалось сохранить изменения. Проверьте введенные данные.");
+    }
   };
+  
 
   return (
     <section className="settings-page">

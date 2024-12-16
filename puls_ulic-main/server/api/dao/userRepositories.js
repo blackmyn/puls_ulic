@@ -1,5 +1,3 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const db = require('../dbconnector/dbconnector'); 
 
 const getAuthUser = async ({ email, password }) => {
@@ -75,8 +73,45 @@ const registerUser = async ({ fullName, phone, email, password }) => {
   });
 };
 
+const getUserInfo = async (userId) => {
+  const sql = `
+    SELECT full_name, phone_number, email
+    FROM users
+    WHERE id = $1
+  `;
+  return new Promise((resolve, reject) => {
+    db.query(sql, [userId], (err, result) => {
+      if (err) {
+        console.error('Ошибка SQL (getUserInfo):', err.message);
+        return reject(new Error("Ошибка с базой данных"));
+      }
+      resolve(result.rows[0]);
+    });
+  });
+};
+
+const editUser = async (userData, userId) => {
+  const { fullName, phone, email, password } = userData;
+
+  try {
+    await db.query(
+      `UPDATE users SET full_name = $1, phone_number = $2, email = $3, password = $4 WHERE id = $5`,
+      [fullName, phone, email, password, userId]
+    );
+
+    return { message: "Профиль успешно обновлён" };
+  } catch (error) {
+    console.error("Ошибка обновления профиля:", error.message);
+    throw new Error("Ошибка на сервере при обновлении профиля");
+  }
+};
+
+
+
 
 module.exports = { 
   getAuthUser,
-  registerUser
+  registerUser,
+  getUserInfo,
+  editUser
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -27,10 +27,17 @@ import "./NewOrder.css";
 import { getDistance } from "geolib";
 import OrderStatusContainer from "./OrderStatusContainer";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 interface Location {
   lat: number;
   lng: number;
+}
+
+interface Tariff {
+  id: number;
+  name: string;
+  cost_per_km: number;
 }
 
 interface LocationMarkerProps {
@@ -106,19 +113,32 @@ function NewOrder() {
   const [price, setPrice] = useState<number | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null);  
   const [showOrderStatus, setShowOrderStatus] = useState(false); 
+  const [tariffs, setTariffs] = useState<Tariff[]>([]);
+  const [paymentMethod, setPaymentMethod] = useState<string>("cash");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchTariffs = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/tariffs");
+        const data = await response.json();
+        setTariffs(data);
+      } catch (error) {
+        console.error("Ошибка загрузки тарифов:", error);
+      }
+    };
+    fetchTariffs();
+  }, []);
 
   const handleTariffSelect = (tariff: string) => {
     setSelectedTariff(tariff);
     if (distance !== null) {
-      const pricePerKm = {
-        Эконом: 2.5,
-        Комфорт: 3.8,
-        Бизнес: 6.0,
-      };
-      const calculatedPrice =
-        (distance / 1000) * pricePerKm[tariff as keyof typeof pricePerKm]; 
-      setPrice(Number(calculatedPrice.toFixed(2)));
+      const selectedTariffObj = tariffs.find((t) => t.name === tariff);
+      if (selectedTariffObj) {
+        const calculatedPrice =
+          (distance / 1000) * selectedTariffObj.cost_per_km;
+        setPrice(Number(calculatedPrice.toFixed(2)));
+      }
     }
   };
 
@@ -148,14 +168,46 @@ function NewOrder() {
     }
 };
 
-  const handlePayment = () => {
-    if (price !== null) {
-      setPaymentStatus(`Оплата успешно проведена. Сумма: ${price} руб.`);
-      navigate("/orderstatus");
-    } else {
-      setPaymentStatus("Ошибка: не удалось вычислить стоимость.");
+const handlePayment = async () => {
+  if (price !== null && distance !== null && selectedTariff) {
+    try {
+      const selectedTariffObj = tariffs.find((t) => t.name === selectedTariff);
+      if (!selectedTariffObj) {
+        setPaymentStatus("Ошибка: выбранный тариф не найден.");
+        return;
+      }
+
+      const payload = {
+        users_id: localStorage.getItem("userId"), 
+        tariffs_id: selectedTariffObj.id,
+        pickup_location: addresses[0],
+        dropoff_location: addresses[1],
+        cost: price,
+        mileage: distance / 1000, 
+        payment_method: paymentMethod, 
+      };
+
+      const response = await axios.post(
+        "http://localhost:5000/api/createuncompletedorders",
+        payload
+      );
+      
+
+      if (response.status === 200 && response.data.id) {
+        const { id } = response.data;
+        setPaymentStatus("Заказ успешно создан.");
+        navigate(`/orderstatus/${id}`);
+      } else {
+        setPaymentStatus("Ошибка: не удалось создать заказ.");
+      }      
+    } catch (err) {
+      console.error("Ошибка при отправке данных:", err);
+      setPaymentStatus("Ошибка при создании заказа.");
     }
-  };
+  } else {
+    setPaymentStatus("Ошибка: не удалось вычислить стоимость.");
+  }
+};
 
   const handleCancelOrder = () => {
     setShowOrderStatus(false); 
@@ -238,48 +290,32 @@ function NewOrder() {
           <div className="tariff-selection">
             <h3>Тариф</h3>
             <ul>
-              <li
-                className={`tariff-item ${
-                  selectedTariff === "Эконом" ? "active" : ""
-                }`}
-                onClick={() => handleTariffSelect("Эконом")}
-              >
-                <div className="tariff-info">
-                  <span className="tariff-name">Эконом</span>
-                  <span className="tariff-price">~ 2.5 руб./км</span>
-                </div>
-              </li>
-              <li
-                className={`tariff-item ${
-                  selectedTariff === "Комфорт" ? "active" : ""
-                }`}
-                onClick={() => handleTariffSelect("Комфорт")}
-              >
-                <div className="tariff-info">
-                  <span className="tariff-name">Комфорт</span>
-                  <span className="tariff-price">~ 3.8 руб./км</span>
-                </div>
-              </li>
-              <li
-                className={`tariff-item ${
-                  selectedTariff === "Бизнес" ? "active" : ""
-                }`}
-                onClick={() => handleTariffSelect("Бизнес")}
-              >
-                <div className="tariff-info">
-                  <span className="tariff-name">Бизнес</span>
-                  <span className="tariff-price">~ 6.0 руб./км</span>
-                </div>
-              </li>
+              {tariffs.map((tariff) => (
+                <li
+                  key={tariff.id}
+                  className={`tariff-item ${
+                    selectedTariff === tariff.name ? "active" : ""
+                  }`}
+                  onClick={() => handleTariffSelect(tariff.name)}
+                >
+                  <div className="tariff-info">
+                    <span className="tariff-name">{tariff.name}</span>
+                    <span className="tariff-price">
+                      ~ {tariff.cost_per_km} руб./км
+                    </span>
+                  </div>
+                </li>
+              ))}
             </ul>
           </div>
 
           <FormControl component="fieldset" className="payment-method">
             <FormLabel component="legend">Способ оплаты</FormLabel>
-            <RadioGroup
+              <RadioGroup
               aria-label="payment-method"
               name="paymentMethod"
-              defaultValue="cash"
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
             >
               <FormControlLabel
                 value="cash"

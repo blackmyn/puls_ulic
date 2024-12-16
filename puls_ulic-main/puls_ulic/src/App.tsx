@@ -29,11 +29,11 @@ function App() {
               <Route path="/profiledriver" element={<DriverProfile />} />
               <Route path="/profiledispatcher" element={<Dispatcher />} />
               <Route path="/acceptedorder" element={<AcceptedOrder />} />
-              <Route path="/orderstatus" element={<OrderStatusContainer />} />
+              <Route path="/orderstatus/:orderId" element={<OrderStatusContainer />} />
             </Route>
 
             {/* Catch-all route for unauthorized access */}
-            <Route path="*" element={<Navigate to="/" />} />
+            <Route path="*" element={<Navigate to="/" />} />  
           </Routes>
         </BrowserRouter>
       </div>

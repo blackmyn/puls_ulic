@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userId, setUserId] = useState<string | null>(
     localStorage.getItem("userId") 
   );
+  
 
   const login = (userRole: string, userId: string) => {
     setIsAuthenticated(true);

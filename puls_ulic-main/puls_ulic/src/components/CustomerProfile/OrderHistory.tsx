@@ -1,5 +1,6 @@
 import React from "react";
 import "./OrderHistory.css";
+import { Link } from "react-router-dom";
 
 function OrderHistory() {
   const orderHistory = [
@@ -59,8 +60,9 @@ function OrderHistory() {
             </p>
           </div>
           <div className="order-actions">
-            <button className="repeat-order">Повторить заказ</button>
-            <button className="leave-feedback">Оставить отзыв</button>
+          <Link to="/neworderclient">
+              <button className="repeat-order">Повторить заказ</button>
+          </Link>
           </div>
           {order.feedback && (
             <div className="order-feedback">

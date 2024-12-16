@@ -98,13 +98,6 @@ CREATE TABLE UsedCars (
     garage_car_id INT NOT NULL REFERENCES GarageCars(id)
 );
 
--- Таблица: Клиенты
-CREATE TABLE Clients (
-    id SERIAL PRIMARY KEY,
-    requisites VARCHAR(255) NULL,
-    user_id INT NOT NULL REFERENCES Users(id)
-);
-
 -- Таблица: Диспетчеры
 CREATE TABLE Dispatchers (
     id SERIAL PRIMARY KEY,
@@ -116,9 +109,9 @@ CREATE TABLE Dispatchers (
 CREATE TABLE CompletedOrders (
     id SERIAL PRIMARY KEY,
     driver_id INT NOT NULL REFERENCES Drivers(id),
-    client_id INT NOT NULL REFERENCES Clients(id),
+    users_id INT NOT NULL REFERENCES Users(id),
     dispatcher_id INT NULL REFERENCES Dispatchers(id),
-	tariffs_id INT NULL REFERENCES Tatiffs(id),
+	tariffs_id INT NULL REFERENCES Tariffs(id),
     cost DECIMAL(10, 2) NOT NULL,
     mileage DECIMAL(10, 2) NOT NULL,
     pickup_location VARCHAR(255) NOT NULL,
@@ -132,10 +125,10 @@ CREATE TABLE CompletedOrders (
 -- Таблица: Невыполненные заказы
 CREATE TABLE UncompletedOrders (
     id SERIAL PRIMARY KEY,
-    driver_id INT NOT NULL REFERENCES Drivers(id),
-    client_id INT NOT NULL REFERENCES Clients(id),
+    driver_id INT NULL REFERENCES Drivers(id),
+    users_id INT NOT NULL REFERENCES Users(id),
     dispatcher_id INT NULL REFERENCES Dispatchers(id),
-	tariffs_id INT NULL REFERENCES Tatiffs(id),
+	tariffs_id INT NULL REFERENCES Tariffs(id),
     pickup_location VARCHAR(255) NOT NULL,
     dropoff_location VARCHAR(255) NOT NULL,
     cost DECIMAL(10, 2) NOT NULL,

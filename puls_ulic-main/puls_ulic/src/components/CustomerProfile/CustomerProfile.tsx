@@ -1,19 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./CustomerProfile.css";
 import OrderHistory from "./OrderHistory";
 import Settings from "./Settings";
 import Header from "../HeaderSecond/HeaderSecond";
 import Navigation from "../Navigation/Navigation";
-import { useAuth } from "../../AuthContext"; // Import useAuth
+import { useAuth } from "../../AuthContext";
+import axios from "axios";
+
+interface Customer {
+  full_name: string;
+  email: string;
+  phone_number: string;
+}
 
 function CustomerProfile() {
+  const [customer, setCustomer] = useState<Customer | null>(null);
   const { logout } = useAuth();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchCustomerData = async () => {
+      try {
+        const userId = localStorage.getItem("userId");
+        const response = await axios.get(`http://localhost:5000/api/customer/profile?userId=${userId}`);
+        setCustomer(response.data); 
+      } catch (error) {
+        console.error("Ошибка загрузки данных клиента:", error);
+      }
+    };
+
+    fetchCustomerData();
+  }, []);
+
   const handleLogout = () => {
     logout();
-    navigate("/"); // Redirect to the main page after logout
+    navigate("/"); 
   };
 
   return (
@@ -28,15 +50,12 @@ function CustomerProfile() {
               />
             </div>
             <div className="user-details">
-              <h2>Иван Иванов</h2>
+              <h2>{customer?.full_name}</h2>
               <p>
-                <span className="label">Email:</span> ivan.ivanov@example.com
+                <span className="label">Email:</span> {customer?.email}
               </p>
               <p>
-                <span className="label">Телефон:</span> +375 (29) 123-45-67
-              </p>
-              <p>
-                <span className="label">Дата регистрации:</span> 15.09.2024
+                <span className="label">Телефон:</span> {customer?.phone_number}
               </p>
             </div>
           </div>
@@ -57,14 +76,6 @@ function CustomerProfile() {
             <div className="stat-item">
               <div className="stat-label">Пройдено километров:</div>
               <div className="stat-value">3,456 км</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-label">Средняя оценка:</div>
-              <div className="stat-value">4.8</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-label">Любимый маршрут:</div>
-              <div className="stat-value">ул. Пушкина, 10 - ТЦ "Галерея"</div>
             </div>
           </div>
           <div className="user-stats">

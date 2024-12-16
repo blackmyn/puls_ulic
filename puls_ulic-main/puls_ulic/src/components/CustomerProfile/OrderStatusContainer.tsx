@@ -4,73 +4,111 @@ import DriverFound from './DriverFound';
 import DriverArrived from './DriverArrived';
 import OrderCompleted from './OrderCompleted';
 import './OrderStatus.css';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+
+type Driver = {
+  name: string;
+  car: string;
+  rating: number;
+  photo: string;
+  phone: string;
+} | null;
+
+type Order = {
+  order_id: number;
+  driver_id: number;
+  users_id: number;
+  dispatcher_id: number;
+  tariffs_id: number;
+  pickup_location: string;
+  dropoff_location: string;
+  cost: number;
+  mileage: number;
+  payment_method: string;
+} | null;
 
 const OrderStatusContainer: React.FC = () => {
-  const [orderStatus, setOrderStatus] = useState<'Поиск машины' | 'Водитель найден' | 'Водитель прибыл' | 'Заказ завершен'>('Поиск машины');
-  const [driver, setDriver] = useState<Driver | null>(null);
+const { orderId } = useParams<{ orderId: string }>();
+const [orderStatus, setOrderStatus] = useState<
+  'Поиск машины' | 'Водитель найден' | 'Водитель прибыл' | 'Заказ завершен'
+>('Поиск машины');
+const [driver, setDriver] = useState<Driver | null>(null);
+const [order, setOrder] = useState<Order | null>(null);
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
+useEffect(() => {
+  let timer: ReturnType<typeof setTimeout>;
 
-    const updateStatus = () => {
+  
+  if (orderStatus === 'Поиск машины') {
+    timer = setTimeout(() => {
+      axios
+        .get("http://localhost:5000/api/drivers")
+        .then((response) => {
+          if (response.data) {
+            setDriver(response.data);
+            
+            const driverId = response.data.driver_id;
+            axios.put(`http://localhost:5000/api/orders/edituncompletedorders/${orderId}`, {
+              drivers_id: driverId
+            })
+            .then((putResponse) => {
+              console.log("Статус заказа обновлен:", putResponse.data);
+            })
+            .catch((putError) => {
+              console.error("Ошибка при обновлении статуса заказа:", putError.response ? putError.response.data : putError.message);
+            });
+          } else {
+            console.error("Данные о водителе отсутствуют");
+          }
+          setOrderStatus("Водитель найден");
+        })
+        .catch((error) => {
+          console.error("Ошибка при загрузке данных о водителе:", error);
+          setOrderStatus("Поиск машины");
+        });
+    }, 5000);
+  } else if (orderStatus === 'Водитель найден') {
+    timer = setTimeout(() => {
+      setOrderStatus('Водитель прибыл');
+    }, 15000);
+  } else if (orderStatus === 'Водитель прибыл') {
+    timer = setTimeout(() => {
+      axios
+        .get(`http://localhost:5000/api/foundorder/${orderId}`)
+        .then((response) => {
+          setOrder(response.data);
+        })
+      .catch((error) => {
+        console.error("Error fetching order:", error);
+      });
+    
+      setOrderStatus('Заказ завершен');
+    }, 15000);
+  }
+
+  return () => clearTimeout(timer);
+}, [orderStatus, orderId]); 
+ 
+
+    const renderStatusComponent = () => {
       switch (orderStatus) {
         case 'Поиск машины':
-          timer = setTimeout(() => {
-            setOrderStatus('Водитель найден');
-            setDriver({
-              name: 'Иван Иванов',
-              car: 'Hyundai Solaris, серый',
-              plate: 'A123BC 199',
-              rating: 4.8,
-              photo:
-                'https://media.istockphoto.com/id/978258506/photo/crowdsourced-taxi-driver-in-england.jpg?s=612x612&w=0&k=20&c=iLre7SExG3h26-KZiww1PX_73rqYgjBZc8dCR1Ev7VU=',
-              phone: '+7 (999) 123-45-67',
-            });
-          }, 15000);
-          break;
+          return <WaitingForDriver />;
         case 'Водитель найден':
-          timer = setTimeout(() => {
-            setOrderStatus('Водитель прибыл');
-          }, 15000);
-          break;
+          if (!driver) return <p>Загрузка данных о водителе...</p>;
+          return <DriverFound driver={driver} />;
         case 'Водитель прибыл':
-          timer = setTimeout(() => {
-            setOrderStatus('Заказ завершен');
-          }, 15000);
-          break;
+          return <DriverArrived />;
+        case 'Заказ завершен':
+          return order ? <OrderCompleted order={order} /> : <p>Загрузка данных о заказе...</p>;
         default:
-          clearTimeout(timer); // Очищаем таймер, если статус уже завершен
+          return <p>Ошибка: статус заказа не распознан.</p>;
       }
     };
 
-    updateStatus();
 
-      return () => clearTimeout(timer);
-  }, [orderStatus]);
-
-  let statusComponent;
-  switch (orderStatus) {
-    case 'Поиск машины':
-      statusComponent = <WaitingForDriver />;
-      break;
-    case 'Водитель найден':
-      statusComponent = <DriverFound driver={driver!} />;
-      break;
-    case 'Водитель прибыл':
-      statusComponent = <DriverArrived />;
-      break;
-    case 'Заказ завершен':
-      statusComponent = <OrderCompleted />;
-      break;
-    default:
-      statusComponent = <p>Неизвестный статус</p>;
-  }
-
-  return (
-    <div className="order-status-container">
-        {statusComponent}
-    </div>
-  );
+  return <div className="order-status-container">{renderStatusComponent()}</div>;
 };
 
 export default OrderStatusContainer;

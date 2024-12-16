@@ -43,7 +43,6 @@ function App() {
       </Element>
       <AboutUs />
       <NumbersSpeak ref={numbersSpeakRef} />
-      <Dispatcher></Dispatcher>
       {/* <WarehouseManager></WarehouseManager>
       <WarehouseWorker></WarehouseWorker>
       <MaintenanceWorker></MaintenanceWorker>
